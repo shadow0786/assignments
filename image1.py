@@ -23,6 +23,7 @@ class image_converter:
     self.image_sub1 = rospy.Subscriber("/camera1/robot/image_raw",Image,self.callback1)
     # initialize the bridge between openCV and ROS
     self.bridge = CvBridge()
+    self.cv_image1_spheres_pub = rospy.Publisher("cv_image1/spheres_pub" , Float64MultiArray, queue_length = 10)
 
 
   # Recieve data from camera 1, process it, and publish
@@ -43,6 +44,65 @@ class image_converter:
       self.image_pub1.publish(self.bridge.cv2_to_imgmsg(self.cv_image1, "bgr8"))
     except CvBridgeError as e:
       print(e)
+      
+  def find_yellow(self , image):
+    mask = cv2.inRange(image , (0,100,100) , (0,255,255))
+    kernel = np.ones((5,5) , np.unit8)
+    NewMask = cv2.dilate(mask , kernel , iteration = 3)
+    Mo = cv2.moments(NewMask)
+    if Mo['m00' == 0]:
+      cx = -10
+      cy = -10
+      return np.array(cx,cy)
+    cx = int(Mo['m10'] / Mo['m00'])
+    cy = int(Mo['m01'] / Mo['m00'])
+    return np.array(cx,cy)
+  
+  def find_red(self , image):
+    mask = cv2.inRange(image , (0,0,100) , (0,0,255))
+    kernel = np.ones((5,5) , np.unit8)
+    NewMask = cv2.dilate(mask , kernel , iteration = 3)
+    Mo = cv2.moments(NewMask)
+    if Mo['m00' == 0]:
+      cx = -10
+      cy = -10
+      return np.array(cx,cy)
+    cx = int(Mo['m10'] / Mo['m00'])
+    cy = int(Mo['m01'] / Mo['m00'])
+    return np.array(cx,cy)
+  
+  def find_green(self , image):
+    mask = cv2.inRange(image , (0,100,0) , (0,255,0))
+    kernel = np.ones((5,5) , np.unit8)
+    NewMask = cv2.dilate(mask , kernel , iteration = 3)
+    Mo = cv2.moments(NewMask)
+    if Mo['m00' == 0]:
+      cx = -10
+      cy = -10
+      return np.array(cx,cy)
+    cx = int(Mo['m10'] / Mo['m00'])
+    cy = int(Mo['m01'] / Mo['m00'])
+    return np.array(cx,cy)
+  
+  def find_blue(self , image):
+    mask = cv2.inRange(image , (100,0,0) , (255,0,0))
+    kernel = np.ones((5,5) , np.unit8)
+    NewMask = cv2.dilate(mask , kernel , iteration = 3)
+    Mo = cv2.moments(NewMask)
+    if Mo['m00' == 0]:
+      cx = -10
+      cy = -10
+      return np.array(cx,cy)
+    cx = int(Mo['m10'] / Mo['m00'])
+    cy = int(Mo['m01'] / Mo['m00'])
+    return np.array(cx,cy)
+  
+  def find_orange(self , image):
+    mask  = cv2.inRange(image  ,(50,100,110) , (90,185,220))
+    return mask
+    
+    
+              
 
 # call the class
 def main(args):
