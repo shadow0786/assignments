@@ -58,6 +58,13 @@ class image_converter:
     self.green_pos_IMG2 = self.find_green(self.cv_image2)
     self.red_pos_IMG2 = self.find_red(self.cv_image2)
     self.combined_posIMG12 = self.pos_3D_plane
+    
+    self.Sinjoint2=Float64()
+    self.Sinjoint2.data= self.getSinJoints[0]
+    self.Sinjoint3=Float64()
+    self.Sinjoint3.data= self.getSinJoints[1]
+    self.Sinjoint4=Float64()
+    self.Sinjoint4.data= self.getSinJoints[2]
 
     # Uncomment if you want to save the image
     #cv2.imwrite('image_copy.png', cv_image)
@@ -67,9 +74,21 @@ class image_converter:
     # Publish the results
     try: 
       self.image_pub2.publish(self.bridge.cv2_to_imgmsg(self.cv_image2, "bgr8"))
+      self.robot_Sinjoint2.publish(self.Sinjoint2)
+      self.robot_Sinjoint3.publish(self.Sinjoint3)
+      self.robot_Sinjoint4.publish(self.Sinjoint4)
     except CvBridgeError as e:
       print(e)
       
+      
+   def getSinJoints(self):
+    cur_time = self.time
+    self.joint2 = float(math.pi/2 * math.sin(math.pi/15 * cur_time))
+    self.joint3 = float(math.pi/2 * math.sin(math.pi/18 * cur_time))
+    self.joint4 = float(math.pi/2 * math.sin(math.pi/20 * cur_time))
+    return np.array([self.joint2, self.joint3,self.joint4])  
+  
+  
   def locate_target_sphere(self, image1, template):
     matching = cv2.matchTemplate(image1, template, 0)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(matching)
