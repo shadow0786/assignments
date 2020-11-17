@@ -52,6 +52,12 @@ class image_converter:
       self.cv_image2 = self.bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
       print(e)
+    self.yellow_pos_IMG2 = self.find_yellow(self.cv_image2)
+    self.blue_pos_IMG2 = self.find_blue(self.cv_image2)
+    self.green_pos_IMG2 = self.find_green(self.cv_image2)
+    self.red_pos_IMG2 = self.find_red(self.cv_image2)
+    self.combined_posIMG12 = self.pos_3D_plane
+
     # Uncomment if you want to save the image
     #cv2.imwrite('image_copy.png', cv_image)
     im2=cv2.imshow('window2', self.cv_image2)
