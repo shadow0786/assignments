@@ -52,6 +52,7 @@ class image_converter:
       self.cv_image2 = self.bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
       print(e)
+      
     self.yellow_pos_IMG2 = self.find_yellow(self.cv_image2)
     self.blue_pos_IMG2 = self.find_blue(self.cv_image2)
     self.green_pos_IMG2 = self.find_green(self.cv_image2)
@@ -146,6 +147,10 @@ class image_converter:
   def find_orange(self , image):
     mask  = cv2.inRange(image  ,(50,100,110) , (90,185,220))
     return mask
+  
+  def pixTometer(self):
+    distance = 2.5/(self.blue_pos_IMG2[1] - self.yellow_pos_IMG2[1])
+    return distance
 
 # call the class
 def main(args):
