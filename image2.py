@@ -84,18 +84,33 @@ class image_converter:
     meter = self.pixel2meter() 
     yellow_pos_3D = np.array([0, 0, 0])
     blue_pos_3D = np.array([0,0,2.5])
-    
+    green_pos_3D = np.array([0,0,6])
+    red_pos_3D = np.array([0,0,9])
+     
     if (self.green_pos_IMG2[0] == -10):
       if (self.blue_pos_IMG2[0] == -10):
-        green_pos_3D = np.array([self.green_img1_pos[0] , 0 , self.green_img1_pos[1]])
+        green_pos_3D = np.array([0, self.green_img1_pos[0] * meter, self.green_img1_pos[1] * meter])
       if (self.blue_pos_IMG2[0] != -10):
         if (self.red_pos_IMG2[0] == -10):
-          green_pos_3D = np.array([self.green_img1_pos[0] , 0 , self.green_img1_pos[1]])
+          green_pos_3D = np.array([0 , self.green_img1_pos[0] * meter , self.green_img1_pos[1] * meter])
         if (self.red_pos_IMG2[0] != -10):
           if (self.red_img1_pos[1] - self.yellow_img1_pos[1] > 0):
-            green_pos_3D = np.array([self.green_img1_pos[0] , 0 , self.green_img1_pos[1]])
+            green_pos_3D = np.array([0 , self.green_img1_pos[0] * meter , self.green_img1_pos[1] * meter])
           if (self.red_img1_pos[1] - self.yellow_img1_pos[1] < 0):
-            green_pos_3D = np.array([self.red_img1_pos[0] , 0 , self.red_img1_pos[1]])
+            green_pos_3D = np.array([0 , self.red_img1_pos[0] *meter , self.red_img1_pos[1] * meter])
+     
+    if (self.red_pos_IMG2[0] == -10):  
+      red_pos_3D = np.array([self.green_img1_pos[0] * meter, self.red_img1_pos[0] *meter ,self.red_img1_pos[1] * meter])
+     
+    if (self.green_img1_pos[0] == -10):
+      green_pos_3D = np.array([self.green_pos_IMG2[0] * meter, 0 , self.green_pos_IMG2[1] * meter])
+    if (self.red_img1_pos[0] == -10):
+      red_pos_3D = np.array([self.red_pos_IMG2[0] * meter, 0 , self.red_pos_IMG2[1] * meter])
+      
+      
+      
+      
+      
      
          
             
