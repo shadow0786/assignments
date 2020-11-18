@@ -80,6 +80,32 @@ class image_converter:
     except CvBridgeError as e:
       print(e)
       
+   def pos_3D_plane(self):
+    meter = self.pixel2meter() 
+    yellow_pos_3D = np.array([0, 0, 0])
+    blue_pos_3D = np.array([0,0,2.5])
+    
+    if (self.green_pos_IMG2[0] == -10):
+      if (self.blue_pos_IMG2[0] == -10):
+        green_pos_3D = np.array([self.green_img1_pos[0] , 0 , self.green_img1_pos[1]])
+      if (self.blue_pos_IMG2[0] != -10):
+        if (self.red_pos_IMG2[0] == -10):
+          green_pos_3D = np.array([self.green_img1_pos[0] , 0 , self.green_img1_pos[1]])
+        if (self.red_pos_IMG2[0] != -10):
+          if (self.red_img1_pos[1] - self.yellow_img1_pos[1] > 0):
+            green_pos_3D = np.array([self.green_img1_pos[0] , 0 , self.green_img1_pos[1]])
+          if (self.red_img1_pos[1] - self.yellow_img1_pos[1] < 0):
+            green_pos_3D = np.array([self.red_img1_pos[0] , 0 , self.red_img1_pos[1]])
+     
+         
+            
+            
+          
+       
+        
+    
+    
+      
       
    def getSinJoints(self):
     cur_time = self.time
