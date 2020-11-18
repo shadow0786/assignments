@@ -107,20 +107,15 @@ class image_converter:
     if (self.red_img1_pos[0] == -10):
       red_pos_3D = np.array([self.red_pos_IMG2[0] * meter, 0 , self.red_pos_IMG2[1] * meter])
       
-      
-      
-      
-      
-     
-         
-            
-            
-          
-       
-        
-    
-    
-      
+    return np.array([yellow_pos_3D , blue_pos_3D , green_pos_3D , red_pos_3D])
+  
+   def getJointAng(self):
+    centerY = self.combined_posIMG12[0]
+    circleB = self.combined_posIMG12[1]
+    circleG = self.combined_posIMG12[2] 
+    circleR = self.combined_posIMG12[3]
+    # Solve using trigonometry
+# 
       
    def getSinJoints(self):
     cur_time = self.time
