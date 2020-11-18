@@ -42,7 +42,7 @@ class image_converter:
     self.green_img1_pos = np.array([objects_coordinates[4],objects_coordinates[5]])
     self.red_img1_pos = np.array([objects_coordinates[6],objects_coordinates[7]])
     self.targetS_img1_pos = np.array([objects_coordinates[8],objects_coordinates[9]])
-    self.targetR_img1_pos = np.array([objects_coordinates[10],objects_coordinates[11]]) 
+#     self.targetR_img1_pos = np.array([objects_coordinates[10],objects_coordinates[11]]) 
 
 
   # Recieve data, process it, and publish
@@ -57,6 +57,7 @@ class image_converter:
     self.blue_pos_IMG2 = self.find_blue(self.cv_image2)
     self.green_pos_IMG2 = self.find_green(self.cv_image2)
     self.red_pos_IMG2 = self.find_red(self.cv_image2)
+    self.orange_target_IMG2 = self.locate_target_sphere(self.cv_image2, self.templateS)
     self.combined_posIMG12 = self.pos_3D_plane
     
     self.Sinjoint2=Float64()
@@ -126,26 +127,43 @@ class image_converter:
   
   
   def locate_target_sphere(self, image1, template):
-    matching = cv2.matchTemplate(image1, template, 0)
-    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(matching)
-    x = min_loc[0] 
-    y = min_loc[1]
-    return np.array([x,y])
-
-  def locate_target_rectangle(self, image1, template):
-    matching = cv2.matchTemplate(image1, template, 0)
-    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(matching)
-    x = min_loc[0] 
-    y = min_loc[1]
-    return np.array([x,y])
-
-  def locate_targets(self, image1, templateS , templateR):
     maskOrange = self.find_orange(image1)
     templateSphere = cv2.imread(templateS, 0)
-    templateRectangle = cv2.imread(templateR, 0)
-    targetSphere = self.locate_target_sphere(maskOrange, templateSphere)
-    targetRectangle = self.locate_target_rectangle(maskOrange, templateRectangle)
-    return np.array([targetSphere , targetRectangle])
+    matching = cv2.matchTemplate(maskOrange, templateS, 0)
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(matching)
+    x = min_loc[0] 
+    y = min_loc[1]
+    return np.array([x,y])
+  
+  def target_3D_location(self):
+    
+    sphere_location = np.array([self.orange_target_IMG2[0] , self.targetS_img1_pos[0] , self.targetS_img1_pos[1]])
+   
+    if (self.targetS_img1_pos[1] == 0):
+      sphere_location = np.array([self.orange_target_IMG2[0] , 0 , self.orange_target_IMG2[1]])
+      
+    if (self.orange_target_IMG2[1] ==0):
+      sphere_location = np.array([0 , self.targetS_img1_pos[0] , self.targetS_img1_pos[1]])
+      
+    return sphere_location
+      
+      
+    
+
+#   def locate_target_rectangle(self, image1, template):
+#     matching = cv2.matchTemplate(image1, template, 0)
+#     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(matching)
+#     x = min_loc[0] 
+#     y = min_loc[1]
+#     return np.array([x,y])
+
+#   def locate_targets(self, image1, templateS , templateR):
+#     maskOrange = self.find_orange(image1)
+#     templateSphere = cv2.imread(templateS, 0)
+#     templateRectangle = cv2.imread(templateR, 0)
+#     targetSphere = self.locate_target_sphere(maskOrange, templateSphere)
+#     targetRectangle = self.locate_target_rectangle(maskOrange, templateRectangle)
+#     return np.array([targetSphere , targetRectangle])
 
   def find_yellow(self , image):
     mask = cv2.inRange(image , (0,100,100) , (0,255,255))
