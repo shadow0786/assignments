@@ -171,15 +171,17 @@ class image_converter:
     y = min_loc[1]
     return np.array([x,y])
   
-  def target_3D_location(self):
+  def target_3D_location(self , image1 , template):
     
     sphere_location = np.array([self.orange_target_IMG2[0] , self.targetS_img1_pos[0] , self.targetS_img1_pos[1]])
    
-    if (self.targetS_img1_pos[1] == 0):
-      sphere_location = np.array([self.orange_target_IMG2[0] , 0 , self.orange_target_IMG2[1]])
-      
-    if (self.orange_target_IMG2[1] ==0):
-      sphere_location = np.array([0 , self.targetS_img1_pos[0] , self.targetS_img1_pos[1]])
+    cam2 = self.locate_target_sphere(image1, template)
+    target_z = max(cam2[1], targetS_img1_pos[1])
+    
+    if target_z == cam2[1] : 
+      sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_pos_IMG2[1]) *-1 ]) * self.pixTometer()
+    if target_z == targetS_img1_pos[1] :
+      sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_img1_pos[1]) *-1 ]) * self.pixTometer()
       
     return sphere_location
       
