@@ -54,9 +54,9 @@ class image_converter:
     def callback2(self,data):
         # Recieve the image
         try:
-        self.cv_image2 = self.bridge.imgmsg_to_cv2(data, "bgr8")
+            self.cv_image2 = self.bridge.imgmsg_to_cv2(data, "bgr8")
         except CvBridgeError as e:
-        print(e)
+            print(e)
         
         self.yellow_pos_IMG2 = self.find_yellow(self.cv_image2)
         self.blue_pos_IMG2 = self.find_blue(self.cv_image2)
@@ -89,17 +89,17 @@ class image_converter:
 
         # Publish the results
         try: 
-        self.image_pub2.publish(self.bridge.cv2_to_imgmsg(self.cv_image2, "bgr8"))
-        self.robot_Sinjoint2.publish(self.Sinjoint2)
-        self.robot_Sinjoint3.publish(self.Sinjoint3)
-        self.robot_Sinjoint4.publish(self.Sinjoint4)
-        self.robot_joint2.publish(self.joint2)
-        self.robot_joint3.publish(self.joint3)
-        self.robot_joint4.publish(self.joint4)
-        self.target_3Dpos.publish(self.target)
+            self.image_pub2.publish(self.bridge.cv2_to_imgmsg(self.cv_image2, "bgr8"))
+            self.robot_Sinjoint2.publish(self.Sinjoint2)
+            self.robot_Sinjoint3.publish(self.Sinjoint3)
+            self.robot_Sinjoint4.publish(self.Sinjoint4)
+            self.robot_joint2.publish(self.joint2)
+            self.robot_joint3.publish(self.joint3)
+            self.robot_joint4.publish(self.joint4)
+            self.target_3Dpos.publish(self.target)
 
         except CvBridgeError as e:
-        print(e)
+            print(e)
         
     def pos_3D_plane(self):
 
@@ -200,9 +200,9 @@ class image_converter:
         target_z = max(cam2[1], targetS_img1_pos[1])
         
         if target_z == cam2[1] : 
-        sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_pos_IMG2[1])*-1]) * self.pixTometer()
+            sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_pos_IMG2[1])*-1]) * self.pixTometer()
         if target_z == targetS_img1_pos[1] :
-        sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_img1_pos[1])*-1]) * self.pixTometer()
+            sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_img1_pos[1])*-1]) * self.pixTometer()
         
         return sphere_location
         
@@ -230,9 +230,9 @@ class image_converter:
         NewMask = cv2.dilate(mask , kernel , iteration = 3)
         Mo = cv2.moments(NewMask)
         if Mo['m00' == 0]:
-        cx = -10
-        cy = -10
-        return np.array([cx,cy])
+            cx = -10
+            cy = -10
+            return np.array([cx,cy])
         cx = int(Mo['m10'] / Mo['m00'])
         cy = int(Mo['m01'] / Mo['m00'])
         return np.array([cx,cy])
@@ -243,9 +243,9 @@ class image_converter:
         NewMask = cv2.dilate(mask , kernel , iteration = 3)
         Mo = cv2.moments(NewMask)
         if Mo['m00' == 0]:
-        cx = -10
-        cy = -10
-        return np.array([cx,cy])
+            cx = -10
+            cy = -10
+            return np.array([cx,cy])
         cx = int(Mo['m10'] / Mo['m00'])
         cy = int(Mo['m01'] / Mo['m00'])
         return np.array([cx,cy])
@@ -256,9 +256,9 @@ class image_converter:
         NewMask = cv2.dilate(mask , kernel , iteration = 3)
         Mo = cv2.moments(NewMask)
         if Mo['m00' == 0]:
-        cx = -10
-        cy = -10
-        return np.array([cx,cy])
+            cx = -10
+            cy = -10
+            return np.array([cx,cy])
         cx = int(Mo['m10'] / Mo['m00'])
         cy = int(Mo['m01'] / Mo['m00'])
         return np.array([cx,cy])
@@ -269,9 +269,9 @@ class image_converter:
         NewMask = cv2.dilate(mask , kernel , iteration = 3)
         Mo = cv2.moments(NewMask)
         if Mo['m00' == 0]:
-        cx = -10
-        cy = -10
-        return np.array([cx,cy])
+            cx = -10
+            cy = -10
+            return np.array([cx,cy])
         cx = int(Mo['m10'] / Mo['m00'])
         cy = int(Mo['m01'] / Mo['m00'])
         return np.array([cx,cy])
@@ -286,12 +286,12 @@ class image_converter:
 
     # call the class
 def main(args):
-ic = image_converter()
-try:
-    rospy.spin()
-except KeyboardInterrupt:
-    print("Shutting down")
-cv2.destroyAllWindows()
+    ic = image_converter()
+    try:
+        rospy.spin()
+    except KeyboardInterrupt:
+        print("Shutting down")
+    cv2.destroyAllWindows()
 
 # run the code if the node is called
 if __name__ == '__main__':
