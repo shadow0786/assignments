@@ -165,7 +165,7 @@ class image_converter:
   def locate_target_sphere(self, image1, template):
     maskOrange = self.find_orange(image1)
     templateSphere = cv2.imread(templateS, 0)
-    matching = cv2.matchTemplate(maskOrange, templateS, 0)
+    matching = cv2.matchTemplate(maskOrange, templateSphere, 0)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(matching)
     x = min_loc[0] 
     y = min_loc[1]
@@ -173,7 +173,7 @@ class image_converter:
   
   def target_3D_location(self , image1 , template):
     
-    sphere_location = np.array([self.orange_target_IMG2[0] , self.targetS_img1_pos[0] , self.targetS_img1_pos[1]])
+    sphere_location = np.array([0 , 0, 0])
    
     cam2 = self.locate_target_sphere(image1, template)
     target_z = max(cam2[1], targetS_img1_pos[1])
