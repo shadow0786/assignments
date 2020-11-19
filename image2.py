@@ -104,10 +104,10 @@ class image_converter:
     def pos_3D_plane(self):
 
         meter = self.pixTometer() 
-        yellow_pos_3D = np.array([0, 0, 0])
-        blue_pos_3D = np.array([0,0,2.5])
-        green_pos_3D = np.array([0,0,6])
-        red_pos_3D = np.array([0,0,9])
+        yellow_pos_3D = np.array([(self.yellow_pos_IMG2[0] - self.yellow_pos_IMG2[0]) * meter,(self.yellow_img1_pos[0] -self.yellow_img1_pos[0]) *meter,((self.yellow_img1_pos[1]  - self.yellow_img1_pos[1]) *-1) *meter])
+        blue_pos_3D = np.array([(self.blue_pos_IMG2[0] - self.yellow_pos_IMG2[0]) * meter,(self.blue_img1_pos[0] -self.yellow_img1_pos[0]) *meter,((self.blue_img1_pos[1]  - self.yellow_img1_pos[1]) *-1) *meter])
+        green_pos_3D = np.array([(self.green_pos_IMG2[0] - self.yellow_pos_IMG2[0]) * meter,(self.green_img1_pos[0] -self.yellow_img1_pos[0]) *meter,((self.green_img1_pos[1]  - self.yellow_img1_pos[1]) *-1) *meter])
+        red_pos_3D = np.array([(self.red_pos_IMG2[0] -self.yellow_pos_IMG2[0]) * meter,(self.red_img1_pos[0] -self.yellow_img1_pos[0]) *meter,((self.red_img1_pos[1]  - self.yellow_img1_pos[1]) *-1) *meter])
         
         if (self.green_pos_IMG2[0] == -10):
             if (self.blue_pos_IMG2[0] == -10):
