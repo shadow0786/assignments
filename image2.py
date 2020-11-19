@@ -29,7 +29,7 @@ class image_converter:
         self.red_img1_pos = np.array([0,0])
         self.targetS_img1_pos = np.array([0,0])
         self.targetR_img1_pos = np.array([0,0])
-        self.img1_object_data = rospy.Subscriber("/image1/objects", Float64MultiArray, self.callbackIMG1)
+        self.img1_object_data = rospy.Subscriber("/cv_image1/objects", Float64MultiArray, self.callbackIMG1)
         self.target_3Dpos = rospy.Publisher("/target/pos_3D",Float64MultiArray,queue_size = 10)
         self.robot_Sinjoint2 = rospy.Publisher("/robot/joint2_position_controller/command", Float64, queue_size = 10)
         self.robot_Sinjoint3 = rospy.Publisher("/robot/joint3_position_controller/command", Float64, queue_size = 10)
@@ -41,7 +41,7 @@ class image_converter:
         self.time = rospy.get_time()
         
     def callbackIMG1(self,data):
-        self.objects_coordinates = np.array(data.data)
+        objects_coordinates = np.array(data.data)
         self.yellow_img1_pos =  np.array([objects_coordinates[0],objects_coordinates[1]])
         self.blue_img1_pos = np.array([objects_coordinates[2],objects_coordinates[3]])
         self.green_img1_pos = np.array([objects_coordinates[4],objects_coordinates[5]])
@@ -63,7 +63,7 @@ class image_converter:
         self.green_pos_IMG2 = self.find_green(self.cv_image2)
         self.red_pos_IMG2 = self.find_red(self.cv_image2)
         templateS = cv2.imread("/home/amami/Project/catkin_ws/src/ivr_assignment/src/image_crop.png", 0 )
-        self.orange_target_ = target_3D_location(self.cv_image2, templateS)
+        self.orange_target_ = self.target_3D_location(self.cv_image2, templateS)
         self.combined_posIMG12 = self.pos_3D_plane
         
         self.Sinjoint2=Float64()
@@ -79,7 +79,7 @@ class image_converter:
         self.joint4=Float64()
         self.joint4.data= self.get_joint_angles(self.pos_3D_plane)[3]
         self.target = Float64()
-        self.target= self.self.orange_target_
+        self.target= self.orange_target_
 
 
         # Uncomment if you want to save the image
@@ -197,12 +197,12 @@ class image_converter:
         sphere_location = np.array([0 , 0, 0])
     
         cam2 = self.locate_target_sphere(image1, template)
-        target_z = max(cam2[1], targetS_img1_pos[1])
+        target_z = max(cam2[1], self.targetS_img1_pos[1])
         
         if target_z == cam2[1] : 
-            sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_pos_IMG2[1])*-1]) * self.pixTometer()
-        if target_z == targetS_img1_pos[1] :
-            sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_img1_pos[1])*-1]) * self.pixTometer()
+            sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], self.targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_pos_IMG2[1])*-1]) * self.pixTometer()
+        if target_z == self.targetS_img1_pos[1] :
+            sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], self.targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_img1_pos[1])*-1]) * self.pixTometer()
         
         return sphere_location
         
@@ -226,7 +226,7 @@ class image_converter:
 
     def find_yellow(self , image):
         mask = cv2.inRange(image , (0,100,100) , (0,255,255))
-        kernel = np.ones((5,5) , np.unit8)
+        kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
         if (Mo['m00' == 0]):
@@ -239,7 +239,7 @@ class image_converter:
 
     def find_red(self , image):
         mask = cv2.inRange(image , (0,0,100) , (0,0,255))
-        kernel = np.ones((5,5) , np.unit8)
+        kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
         if (Mo['m00' == 0]):
@@ -252,7 +252,7 @@ class image_converter:
 
     def find_green(self , image):
         mask = cv2.inRange(image , (0,100,0) , (0,255,0))
-        kernel = np.ones((5,5) , np.unit8)
+        kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
         if (Mo['m00' == 0]):
@@ -265,7 +265,7 @@ class image_converter:
 
     def find_blue(self , image):
         mask = cv2.inRange(image , (100,0,0) , (255,0,0))
-        kernel = np.ones((5,5) , np.unit8)
+        kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
         if (Mo['m00' == 0]):
