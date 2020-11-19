@@ -61,8 +61,7 @@ class image_converter:
             print(e)
 
     def makeData(self , array , array1 , array2 , array3 , array4):
-
-        return np.array([array[0],array[1],array1[0],array1[1],array2[0],array2[1],array3[0],array3[1],array4[0],array4[1])
+        return np.array([array[0] , array[1] , array1[0] , array1[1] , array2[0] , array2[1] , array3[0] , array3[1] , array4[0] , array4[1]])
         
     def locate_target_sphere(self, image1, template):
         maskOrange = self.find_orange(image1)
@@ -93,9 +92,9 @@ class image_converter:
 
         mask = cv2.inRange(image , (0,100,100) , (0,255,255))
         kernel = np.ones((5,5) , np.unit8)
-        NewMask = cv2.dilate(mask , kernel , iteration = 3)
+        NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if Mo['m00' == 0]:
+        if (Mo['m00' == 0]):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -107,9 +106,9 @@ class image_converter:
 
         mask = cv2.inRange(image , (0,0,100) , (0,0,255))
         kernel = np.ones((5,5) , np.unit8)
-        NewMask = cv2.dilate(mask , kernel , iteration = 3)
+        NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if Mo['m00' == 0]:
+        if (Mo['m00' == 0]):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -121,9 +120,9 @@ class image_converter:
 
         mask = cv2.inRange(image , (0,100,0) , (0,255,0))
         kernel = np.ones((5,5) , np.unit8)
-        NewMask = cv2.dilate(mask , kernel , iteration = 3)
+        NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if Mo['m00' == 0]:
+        if (Mo['m00' == 0]):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -135,9 +134,9 @@ class image_converter:
 
         mask = cv2.inRange(image , (100,0,0) , (255,0,0))
         kernel = np.ones((5,5) , np.unit8)
-        NewMask = cv2.dilate(mask , kernel , iteration = 3)
+        NewMask = cv2.dilate(mask , kernel , iterations= 3)
         Mo = cv2.moments(NewMask)
-        if Mo['m00' == 0]:
+        if (Mo['m00' == 0]):
             cx = -10
             cy = -10
             return np.array([cx,cy])
