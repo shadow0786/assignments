@@ -179,9 +179,9 @@ class image_converter:
     target_z = max(cam2[1], targetS_img1_pos[1])
     
     if target_z == cam2[1] : 
-      sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_pos_IMG2[1])]) * self.pixTometer()
+      sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], ((target_z  - self.yellow_pos_IMG2[1])])*-1) * self.pixTometer()
     if target_z == targetS_img1_pos[1] :
-      sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_img1_pos[1])]) * self.pixTometer()
+      sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], ((target_z  - self.yellow_img1_pos[1])])*-1) * self.pixTometer()
       
     return sphere_location
       
