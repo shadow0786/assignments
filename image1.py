@@ -22,7 +22,7 @@ class image_converter:
         self.image_sub1 = rospy.Subscriber("/camera1/robot/image_raw",Image,self.callback1)
         # initialize the bridge between openCV and ROS
         self.bridge = CvBridge()
-        self.cv_image1_data_pub = rospy.Publisher("cv_image1/objects" , Float64MultiArray, queue_length = 10)
+        self.cv_image1_data_pub = rospy.Publisher("/cv_image1/objects" , Float64MultiArray, queue_length = 10)
 
 
     # Recieve data from camera 1, process it, and publish
@@ -91,7 +91,7 @@ class image_converter:
     def find_yellow(self , image):
 
         mask = cv2.inRange(image , (0,100,100) , (0,255,255))
-        kernel = np.ones((5,5) , np.unit8)
+        kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
         if (Mo['m00' == 0]):
@@ -105,7 +105,7 @@ class image_converter:
     def find_red(self , image):
 
         mask = cv2.inRange(image , (0,0,100) , (0,0,255))
-        kernel = np.ones((5,5) , np.unit8)
+        kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
         if (Mo['m00' == 0]):
@@ -119,7 +119,7 @@ class image_converter:
     def find_green(self , image):
 
         mask = cv2.inRange(image , (0,100,0) , (0,255,0))
-        kernel = np.ones((5,5) , np.unit8)
+        kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
         if (Mo['m00' == 0]):
@@ -133,7 +133,7 @@ class image_converter:
     def find_blue(self , image):
 
         mask = cv2.inRange(image , (100,0,0) , (255,0,0))
-        kernel = np.ones((5,5) , np.unit8)
+        kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations= 3)
         Mo = cv2.moments(NewMask)
         if (Mo['m00' == 0]):
