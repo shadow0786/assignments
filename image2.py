@@ -90,23 +90,23 @@ class image_converter:
      
     if (self.green_pos_IMG2[0] == -10):
       if (self.blue_pos_IMG2[0] == -10):
-        green_pos_3D = np.array([0, (self.green_img1_pos[0] - self.yellow_img1_pos[0])  * meter, (self.green_img1_pos[1] - self.yellow_img1_pos[1]) * meter])
+        green_pos_3D = np.array([0, (self.green_img1_pos[0] - self.yellow_img1_pos[0])  * meter, ((self.green_img1_pos[1] - self.yellow_img1_pos[1])*-1) * meter])
       if (self.blue_pos_IMG2[0] != -10):
         if (self.red_pos_IMG2[0] == -10):
-          green_pos_3D = np.array([0, (self.green_img1_pos[0] - self.yellow_img1_pos[0])  * meter, (self.green_img1_pos[1] - self.yellow_img1_pos[1]) * meter])
+          green_pos_3D = np.array([0, (self.green_img1_pos[0] - self.yellow_img1_pos[0])  * meter, ((self.green_img1_pos[1] - self.yellow_img1_pos[1])*-1) * meter])
         if (self.red_pos_IMG2[0] != -10):
           if (self.red_img1_pos[1] - self.yellow_img1_pos[1] > 0):
-            green_pos_3D = np.array([0, (self.green_img1_pos[0] - self.yellow_img1_pos[0])  * meter, (self.green_img1_pos[1] - self.yellow_img1_pos[1]) * meter])
+            green_pos_3D = np.array([0, (self.green_img1_pos[0] - self.yellow_img1_pos[0])  * meter, ((self.green_img1_pos[1] - self.yellow_img1_pos[1])*-1) * meter])
           if (self.red_img1_pos[1] - self.yellow_img1_pos[1] < 0):
-            green_pos_3D = np.array([0 , (self.red_img1_pos[0] - self.yellow_img1_pos[0]) *meter , (self.red_img1_pos[1] - self.yellow_img1_pos[1]) * meter])
+            green_pos_3D = np.array([0 , (self.red_img1_pos[0] - self.yellow_img1_pos[0]) *meter , ((self.red_img1_pos[1] - self.yellow_img1_pos[1])*-1) * meter])
      
     if (self.red_pos_IMG2[0] == -10):  
-      red_pos_3D = np.array([(self.green_img1_pos[0] - self.yellow_img1_pos[0]) * meter, (self.red_img1_pos[0] - self.yellow_img1_pos[0]) *meter , (self.red_img1_pos[1] - self.yellow_img1_pos[1]) * meter])
+      red_pos_3D = np.array([(self.green_img1_pos[0] - self.yellow_img1_pos[0]) * meter, (self.red_img1_pos[0] - self.yellow_img1_pos[0]) *meter , ((self.red_img1_pos[1] - self.yellow_img1_pos[1])*-1) * meter])
      
     if (self.green_img1_pos[0] == -10):
-      green_pos_3D = np.array([(self.green_pos_IMG2[0] - self.yellow_pos_IMG2[0]) * meter, 0 , (self.green_pos_IMG2[1] - self.yellow_pos_IMG2[1]) * meter])
+      green_pos_3D = np.array([(self.green_pos_IMG2[0] - self.yellow_pos_IMG2[0]) * meter, 0 , ((self.green_pos_IMG2[1] - self.yellow_pos_IMG2[1])*-1) * meter])
     if (self.red_img1_pos[0] == -10):
-      red_pos_3D = np.array([(self.red_pos_IMG2[0] - self.yellow_pos_IMG2[0]) * meter, 0 , (self.red_pos_IMG2[1] - self.yellow_pos_IMG2[1]) * meter])
+      red_pos_3D = np.array([(self.red_pos_IMG2[0] - self.yellow_pos_IMG2[0]) * meter, 0 , ((self.red_pos_IMG2[1] - self.yellow_pos_IMG2[1])*-1) * meter])
       
     return np.array([yellow_pos_3D , blue_pos_3D , green_pos_3D , red_pos_3D])
   
@@ -179,9 +179,9 @@ class image_converter:
     target_z = max(cam2[1], targetS_img1_pos[1])
     
     if target_z == cam2[1] : 
-      sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_pos_IMG2[1]) *-1 ]) * self.pixTometer()
+      sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_pos_IMG2[1])]) * self.pixTometer()
     if target_z == targetS_img1_pos[1] :
-      sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_img1_pos[1]) *-1 ]) * self.pixTometer()
+      sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_img1_pos[1])]) * self.pixTometer()
       
     return sphere_location
       
@@ -261,7 +261,7 @@ class image_converter:
   
   def pixTometer(self):
     distance = 2.5/(self.blue_pos_IMG2[1] - self.yellow_pos_IMG2[1])
-    return distance
+    return np.abs(distance)
 
 # call the class
 def main(args):
