@@ -103,7 +103,7 @@ class image_converter:
         
     def pos_3D_plane(self):
 
-        meter = self.pixel2meter() 
+        meter = self.pixTometer() 
         yellow_pos_3D = np.array([0, 0, 0])
         blue_pos_3D = np.array([0,0,2.5])
         green_pos_3D = np.array([0,0,6])
@@ -148,7 +148,7 @@ class image_converter:
         link2 = green - blue
 
         ### start with joint 2 since joint 1 does not rotate
-        angle2 = atan2(green[2] - blue[2], green[1] - blue[1])     ### should we subtract pi/2  ?
+        angle2 = np.arctan2(green[2] - blue[2], green[1] - blue[1])     ### should we subtract pi/2  ?
 
         ####### transform the coordinates into the rotated space
         rotation_matrix_2 = self.rotation_matrix_x(-angle2)
@@ -158,17 +158,17 @@ class image_converter:
         red2 = np.dot(rotation_matrix_2, red)
 
         ########## calculate joint angle 3 in the new rotated space
-        angle3 = atan2(green2[2] - blue2[2], green2[0] - blue2[0])     ### should we subtract pi/2 ?
+        angle3 = np.arctan2(green2[2] - blue2[2], green2[0] - blue2[0])     ### should we subtract pi/2 ?
 
         ####### transform the coordinates into the rotated space
         rotation_matrix_3 = self.rotation_matrix_y(-angle3)
-        yellow3 = np.dot(rotation_matrix_2,yellow2)
-        blue3 = np.dot(rotation_matrix_2, blue2)
-        green3 = np.dot(rotation_matrix_2, green2)
-        red3 = np.dot(rotation_matrix_2, red2)
+        yellow3 = np.dot(rotation_matrix_3,yellow2)
+        blue3 = np.dot(rotation_matrix_3, blue2)
+        green3 = np.dot(rotation_matrix_3, green2)
+        red3 = np.dot(rotation_matrix_3, red2)
 
         ########## calculate joint angle 3 in the new rotated space
-        angle4 = atan2(green3[2] - blue3[2], green3[1] - blue3[1])     ### should we subtract pi/2
+        angle4 = np.arctan2(green3[2] - blue3[2], green3[1] - blue3[1])     ### should we subtract pi/2
 
 
         return [angle2, angle3 , angle4]
@@ -183,7 +183,7 @@ class image_converter:
         return np.array([self.joint2, self.joint3,self.joint4])  
     
     
-    def locate_target_sphere(self, image1, template):
+    def locate_target_sphere(self, image1, templateS):
         maskOrange = self.find_orange(image1)
         templateSphere = cv2.imread(templateS, 0)
         matching = cv2.matchTemplate(maskOrange, templateSphere, 0)
@@ -227,9 +227,9 @@ class image_converter:
     def find_yellow(self , image):
         mask = cv2.inRange(image , (0,100,100) , (0,255,255))
         kernel = np.ones((5,5) , np.unit8)
-        NewMask = cv2.dilate(mask , kernel , iteration = 3)
+        NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if Mo['m00' == 0]:
+        if (Mo['m00' == 0]):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -240,9 +240,9 @@ class image_converter:
     def find_red(self , image):
         mask = cv2.inRange(image , (0,0,100) , (0,0,255))
         kernel = np.ones((5,5) , np.unit8)
-        NewMask = cv2.dilate(mask , kernel , iteration = 3)
+        NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if Mo['m00' == 0]:
+        if (Mo['m00' == 0]):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -253,9 +253,9 @@ class image_converter:
     def find_green(self , image):
         mask = cv2.inRange(image , (0,100,0) , (0,255,0))
         kernel = np.ones((5,5) , np.unit8)
-        NewMask = cv2.dilate(mask , kernel , iteration = 3)
+        NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if Mo['m00' == 0]:
+        if (Mo['m00' == 0]):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -266,9 +266,9 @@ class image_converter:
     def find_blue(self , image):
         mask = cv2.inRange(image , (100,0,0) , (255,0,0))
         kernel = np.ones((5,5) , np.unit8)
-        NewMask = cv2.dilate(mask , kernel , iteration = 3)
+        NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if Mo['m00' == 0]:
+        if (Mo['m00' == 0]):
             cx = -10
             cy = -10
             return np.array([cx,cy])
