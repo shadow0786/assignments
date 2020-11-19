@@ -63,13 +63,16 @@ class image_converter:
     return np.array([array[0],array[1],array1[0],array1[1],array2[0],array2[1],array3[0],array3[1],array4[0],array4[1] , array5[0],array5[1]])
       
   def locate_target_sphere(self, image1, template):
-    matching = cv2.matchTemplate(image1, template, 0)
+    maskOrange = self.find_orange(image1)
+    templateSphere = cv2.imread(templateS, 0)
+    matching = cv2.matchTemplate(maskOrange, templateSphere, 0)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(matching)
     x = min_loc[0] 
     y = min_loc[1]
     return np.array([x,y])
   
 #   def locate_target_rectangle(self, image1, template):
+
 #     matching = cv2.matchTemplate(image1, template, 0)
 #     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(matching)
 #     x = min_loc[0] 
