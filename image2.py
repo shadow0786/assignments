@@ -90,31 +90,67 @@ class image_converter:
      
     if (self.green_pos_IMG2[0] == -10):
       if (self.blue_pos_IMG2[0] == -10):
-        green_pos_3D = np.array([0, self.green_img1_pos[0] * meter, self.green_img1_pos[1] * meter])
+        green_pos_3D = np.array([0, (self.green_img1_pos[0] - self.yellow_img1_pos[0])  * meter, (self.green_img1_pos[1] - self.yellow_img1_pos[1]) * meter])
       if (self.blue_pos_IMG2[0] != -10):
         if (self.red_pos_IMG2[0] == -10):
-          green_pos_3D = np.array([0 , self.green_img1_pos[0] * meter , self.green_img1_pos[1] * meter])
+          green_pos_3D = np.array([0, (self.green_img1_pos[0] - self.yellow_img1_pos[0])  * meter, (self.green_img1_pos[1] - self.yellow_img1_pos[1]) * meter])
         if (self.red_pos_IMG2[0] != -10):
           if (self.red_img1_pos[1] - self.yellow_img1_pos[1] > 0):
-            green_pos_3D = np.array([0 , self.green_img1_pos[0] * meter , self.green_img1_pos[1] * meter])
+            green_pos_3D = np.array([0, (self.green_img1_pos[0] - self.yellow_img1_pos[0])  * meter, (self.green_img1_pos[1] - self.yellow_img1_pos[1]) * meter])
           if (self.red_img1_pos[1] - self.yellow_img1_pos[1] < 0):
-            green_pos_3D = np.array([0 , self.red_img1_pos[0] *meter , self.red_img1_pos[1] * meter])
+            green_pos_3D = np.array([0 , (self.red_img1_pos[0] - self.yellow_img1_pos[0]) *meter , (self.red_img1_pos[1] - self.yellow_img1_pos[1]) * meter])
      
     if (self.red_pos_IMG2[0] == -10):  
-      red_pos_3D = np.array([self.green_img1_pos[0] * meter, self.red_img1_pos[0] *meter ,self.red_img1_pos[1] * meter])
+      red_pos_3D = np.array([(self.green_img1_pos[0] - self.yellow_img1_pos[0]) * meter, (self.red_img1_pos[0] - self.yellow_img1_pos[0]) *meter , (self.red_img1_pos[1] - self.yellow_img1_pos[1]) * meter])
      
     if (self.green_img1_pos[0] == -10):
-      green_pos_3D = np.array([self.green_pos_IMG2[0] * meter, 0 , self.green_pos_IMG2[1] * meter])
+      green_pos_3D = np.array([(self.green_pos_IMG2[0] - self.yellow_pos_IMG2[0]) * meter, 0 , (self.green_pos_IMG2[1] - self.yellow_pos_IMG2[1]) * meter])
     if (self.red_img1_pos[0] == -10):
-      red_pos_3D = np.array([self.red_pos_IMG2[0] * meter, 0 , self.red_pos_IMG2[1] * meter])
+      red_pos_3D = np.array([(self.red_pos_IMG2[0] - self.yellow_pos_IMG2[0]) * meter, 0 , (self.red_pos_IMG2[1] - self.yellow_pos_IMG2[1]) * meter])
       
     return np.array([yellow_pos_3D , blue_pos_3D , green_pos_3D , red_pos_3D])
   
-   def getJointAng(self):
-    centerY = self.combined_posIMG12[0]
-    circleB = self.combined_posIMG12[1]
-    circleG = self.combined_posIMG12[2] 
-    circleR = self.combined_posIMG12[3]
+   def rotation_matrix_y(self, angle):
+      R_y = np.array([[np.cos(angle),0,-np.sin(angle)],
+                           [0,1,0],
+                           [np.sin(angle), 0, np.cos(angle)]])
+      return R_y
+
+   def rotation_matrix_x(self, angle):
+      R_x = np.array([ [1, 0, 0],
+                       [0, np.cos(angle), -np.sin(angle)],
+                       [0, np.sin(angle), np.cos(angle)]])
+      return R_x
+  
+   def get_joint_angles(self, pos_3D_plane):
+      [yellow, blue, green, red] = pos_3D_plane
+      link2 = green - blue
+
+      ### start with joint 2 since joint 1 does not rotate
+      angle2 = atan2(green[2] - blue[2], green[1] - blue[1])     ### should we subtract pi/2  ?
+
+      ####### transform the coordinates into the rotated space
+      rotation_matrix_2 = self.rotation_matrix_x(-angle2)
+      yellow2 = np.dot(rotation_matrix_2,yellow)
+      blue2 = np.dot(rotation_matrix_2, blue)
+      green2 = np.dot(rotation_matrix_2, green)
+      red2 = np.dot(rotation_matrix_2, red)
+
+      ########## calculate joint angle 3 in the new rotated space
+      angle3 = atan2(green2[2] - blue2[2], green2[0] - blue2[0])     ### should we subtract pi/2 ?
+
+      ####### transform the coordinates into the rotated space
+      rotation_matrix_3 = self.rotation_matrix_y(-angle3)
+      yellow3 = np.dot(rotation_matrix_2,yellow2)
+      blue3 = np.dot(rotation_matrix_2, blue2)
+      green3 = np.dot(rotation_matrix_2, green2)
+      red3 = np.dot(rotation_matrix_2, red2)
+
+      ########## calculate joint angle 3 in the new rotated space
+      angle4 = atan2(green3[2] - blue3[2], green3[1] - blue3[1])     ### should we subtract pi/2
+
+
+      return [angle2, angle3 , angle4]
     # Solve using trigonometry
 # 
       
