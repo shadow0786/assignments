@@ -30,13 +30,13 @@ class image_converter:
         self.targetS_img1_pos = np.array([0,0])
         self.targetR_img1_pos = np.array([0,0])
         self.img1_object_data = rospy.Subscriber("/image1/objects", Float64MultiArray, self.callbackIMG1)
-        self.target_3Dpos = rospy.Publisher("/target/pos_3D",Float64MultiArray,queue_size = 10
+        self.target_3Dpos = rospy.Publisher("/target/pos_3D",Float64MultiArray,queue_size = 10)
         self.robot_Sinjoint2 = rospy.Publisher("/robot/joint2_position_controller/command", Float64, queue_size = 10)
         self.robot_Sinjoint3 = rospy.Publisher("/robot/joint3_position_controller/command", Float64, queue_size = 10)
         self.robot_Sinjoint4 = rospy.Publisher("/robot/joint4_position_controller/command", Float64, queue_size = 10)
-        self.robot_joint2 = rospy.Publisher("/robot/joint2_position_controller/command", Float64, queue_size = 10)
-        self.robot_joint3 = rospy.Publisher("/robot/joint3_position_controller/command", Float64, queue_size = 10)
-        self.robot_joint4 = rospy.Publisher("/robot/joint4_position_controller/command", Float64, queue_size = 10)
+        self.robot_joint2 = rospy.Publisher("/robot/joint2_3Dposition_controller/command", Float64, queue_size = 10)
+        self.robot_joint3 = rospy.Publisher("/robot/joint3_3Dposition_controller/command", Float64, queue_size = 10)
+        self.robot_joint4 = rospy.Publisher("/robot/joint4_3Dposition_controller/command", Float64, queue_size = 10)
 
         self.time = rospy.get_time()
         
