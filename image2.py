@@ -30,13 +30,15 @@ class image_converter:
         self.targetS_img1_pos = np.array([0,0])
         self.targetR_img1_pos = np.array([0,0])
         self.img1_object_data = rospy.Subscriber("/cv_image1/objects", Float64MultiArray, self.callbackIMG1)
-        self.target_3Dpos = rospy.Publisher("/target/pos_3D",Float64MultiArray,queue_size = 10)
+        self.target_pos_x = rospy.Publisher("/target/pos_x",Float64,queue_size = 10)
+        self.target_pos_y = rospy.Publisher("/target/pos_y",Float64,queue_size = 10)
+        self.target_pos_z = rospy.Publisher("/target/pos_z",Float64,queue_size = 10)
         self.robot_Sinjoint2 = rospy.Publisher("/robot/joint2_position_controller/command", Float64, queue_size = 10)
         self.robot_Sinjoint3 = rospy.Publisher("/robot/joint3_position_controller/command", Float64, queue_size = 10)
         self.robot_Sinjoint4 = rospy.Publisher("/robot/joint4_position_controller/command", Float64, queue_size = 10)
-        self.robot_joint2 = rospy.Publisher("/robot/joint2_3Dposition_controller/command", Float64, queue_size = 10)
-        self.robot_joint3 = rospy.Publisher("/robot/joint3_3Dposition_controller/command", Float64, queue_size = 10)
-        self.robot_joint4 = rospy.Publisher("/robot/joint4_3Dposition_controller/command", Float64, queue_size = 10)
+        self.robot_joint2 = rospy.Publisher("/robot/joint2_angle_controller/command", Float64, queue_size = 10)
+        self.robot_joint3 = rospy.Publisher("/robot/joint3_angle_controller/command", Float64, queue_size = 10)
+        self.robot_joint4 = rospy.Publisher("/robot/joint4_angle_controller/command", Float64, queue_size = 10)
 
         self.time = rospy.get_time()
         
@@ -64,7 +66,7 @@ class image_converter:
         self.red_pos_IMG2 = self.find_red(self.cv_image2)
         templateS = cv2.imread("/home/amami/Project/catkin_ws/src/ivr_assignment/src/image_crop.png", 0 )
         self.orange_target_ = self.target_3D_location(self.cv_image2, templateS)
-        self.combined_posIMG12 = self.pos_3D_plane
+        self.combined_posIMG12 = self.pos_3D_plane()
         
         self.Sinjoint2=Float64()
         self.Sinjoint2.data= self.getSinJoints()[0]
@@ -73,13 +75,19 @@ class image_converter:
         self.Sinjoint4=Float64()
         self.Sinjoint4.data= self.getSinJoints()[2]
         self.joint2=Float64()
-        self.joint2.data= self.get_joint_angles(self.pos_3D_plane)[1]
+        self.joint2.data= self.get_joint_angles(self.pos_3D_plane)[0]
         self.joint3=Float64()
-        self.joint3.data= self.get_joint_angles(self.pos_3D_plane)[2]
+        self.joint3.data= self.get_joint_angles(self.pos_3D_plane)[1]
         self.joint4=Float64()
-        self.joint4.data= self.get_joint_angles(self.pos_3D_plane)[3]
+        self.joint4.data= self.get_joint_angles(self.pos_3D_plane)[2]
         self.target = Float64()
         self.target= self.orange_target_
+        self.target_x = Float64() 
+        self.target_y = Float64()
+        self.target_z = Float64()
+        self.target_x= self.orange_target_[0]  
+        self.target_y= self.orange_target_[1]
+        self.target_z= self.orange_target_[2]
 
 
         # Uncomment if you want to save the image
@@ -96,7 +104,9 @@ class image_converter:
             self.robot_joint2.publish(self.joint2)
             self.robot_joint3.publish(self.joint3)
             self.robot_joint4.publish(self.joint4)
-            self.target_3Dpos.publish(self.target)
+            self.target_pos_x.publish(self.target_x)
+            self.target_pos_x.publish(self.target_y)
+            self.target_pos_x.publish(self.target_z)
 
         except CvBridgeError as e:
             print(e)
@@ -148,30 +158,44 @@ class image_converter:
         link2 = green - blue
 
         ### start with joint 2 since joint 1 does not rotate
-        angle2 = np.arctan2(green[2] - blue[2], green[1] - blue[1])     ### should we subtract pi/2  ?
+        angle2 = np.arctan2(green[2] - blue[2], green[1] - blue[1])     
 
         ####### transform the coordinates into the rotated space
-        rotation_matrix_2 = self.rotation_matrix_x(-angle2)
+        rotation_matrix_2 = self.rotation_matrix_x(-angle2 + np.pi/2)
         yellow2 = np.dot(rotation_matrix_2,yellow)
         blue2 = np.dot(rotation_matrix_2, blue)
         green2 = np.dot(rotation_matrix_2, green)
         red2 = np.dot(rotation_matrix_2, red)
 
         ########## calculate joint angle 3 in the new rotated space
-        angle3 = np.arctan2(green2[2] - blue2[2], green2[0] - blue2[0])     ### should we subtract pi/2 ?
+        angle3 = np.arctan2(green2[2] - blue2[2], green2[0] - blue2[0])  - np.pi/2   
+        
+        angle3_temp = np.arctan2(green[2] - blue[2], green[0] - blue[0])
+        rotation_matrix = self.rotation_matrix_y(-angle3_temp + np.pi/2)
+        yellow1 = np.dot(rotation_matrix,yellow)
+        blue1 = np.dot(rotation_matrix, blue)
+        green1 = np.dot(rotation_matrix, green)
+        red1 = np.dot(rotation_matrix, red)
+        angle2 = np.arctan2(green1[2] - blue1[2], green1[1] - blue1[1]) - np.pi/4
 
         ####### transform the coordinates into the rotated space
         rotation_matrix_3 = self.rotation_matrix_y(-angle3)
-        yellow3 = np.dot(rotation_matrix_3,yellow2)
-        blue3 = np.dot(rotation_matrix_3, blue2)
-        green3 = np.dot(rotation_matrix_3, green2)
-        red3 = np.dot(rotation_matrix_3, red2)
+        yellow3 = np.dot(rotation_matrix_3,yellow)
+        blue3 = np.dot(rotation_matrix_3, blue)
+        green3 = np.dot(rotation_matrix_3, green)
+        red3 = np.dot(rotation_matrix_3, red)
+        
+        rotation_matrix_4 = self.rotation_matrix_x(-angle2)  # 
+        yellow4 = np.dot(rotation_matrix_4,yellow3)
+        blue4 = np.dot(rotation_matrix_4, blue3)
+        green4 = np.dot(rotation_matrix_4, green3)
+        red4 = np.dot(rotation_matrix_4, red3)
 
         ########## calculate joint angle 3 in the new rotated space
-        angle4 = np.arctan2(green3[2] - blue3[2], green3[1] - blue3[1])     ### should we subtract pi/2
+        angle4 = np.arctan2(red4[2] - green4[2], red4[1] - green4[1])    
 
 
-        return [angle2, angle3 , angle4]
+        return [angle2, -angle3 , angle4]
         # Solve using trigonometry
     # 
         
@@ -185,7 +209,7 @@ class image_converter:
     
     def locate_target_sphere(self, image1, templateS):
         maskOrange = self.find_orange(image1)
-        templateSphere = cv2.imread(templateS, 0)
+        templateSphere = templateS
         matching = cv2.matchTemplate(maskOrange, templateSphere, 0)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(matching)
         x = min_loc[0] 
@@ -277,7 +301,8 @@ class image_converter:
         return np.array([cx,cy])
 
     def find_orange(self , image):
-        mask  = cv2.inRange(image  ,(50,100,110) , (90,185,220))
+        image_hsv = cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
+        mask  = cv2.inRange(image_hsv  ,(9,100,100) , (29,255,255))
         return mask
     
     def pixTometer(self):
