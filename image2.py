@@ -260,7 +260,7 @@ class image_converter:
         kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if (Mo['m00' == 0]):
+        if (Mo['m00'] == 0):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -273,7 +273,7 @@ class image_converter:
         kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if (Mo['m00' == 0]):
+        if (Mo['m00'] == 0):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -286,7 +286,7 @@ class image_converter:
         kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if (Mo['m00' == 0]):
+        if (Mo['m00'] == 0):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -299,7 +299,7 @@ class image_converter:
         kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if (Mo['m00' == 0]):
+        if (Mo['m00'] == 0):
             cx = -10
             cy = -10
             return np.array([cx,cy])
