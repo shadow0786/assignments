@@ -145,8 +145,9 @@ class image_converter:
         return np.array([cx,cy])
     
     def find_orange(self , image):
-        mask  = cv2.inRange(image  ,(50,100,110) , (90,185,220))
-        return mask               
+        image_hsv = cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
+        mask  = cv2.inRange(image_hsv  ,(9,100,100) , (29,255,255))
+        return mask            
 
     # call the class
 def main(args):
