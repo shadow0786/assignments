@@ -36,9 +36,9 @@ class image_converter:
         self.robot_Sinjoint2 = rospy.Publisher("/robot/joint2_position_controller/command", Float64, queue_size = 10)
         self.robot_Sinjoint3 = rospy.Publisher("/robot/joint3_position_controller/command", Float64, queue_size = 10)
         self.robot_Sinjoint4 = rospy.Publisher("/robot/joint4_position_controller/command", Float64, queue_size = 10)
-        self.robot_joint2 = rospy.Publisher("/robot/joint2_angle_controller/command", Float64, queue_size = 10)
-        self.robot_joint3 = rospy.Publisher("/robot/joint3_angle_controller/command", Float64, queue_size = 10)
-        self.robot_joint4 = rospy.Publisher("/robot/joint4_angle_controller/command", Float64, queue_size = 10)
+        self.robot_joint2_angle = rospy.Publisher("/robot/joint2_angle_controller/command", Float64, queue_size = 10)
+        self.robot_joint3_angle = rospy.Publisher("/robot/joint3_angle_controller/command", Float64, queue_size = 10)
+        self.robot_joint4_angle = rospy.Publisher("/robot/joint4_angle_controller/command", Float64, queue_size = 10)
 
         self.time = rospy.get_time()
         
@@ -75,11 +75,11 @@ class image_converter:
         self.Sinjoint4=Float64()
         self.Sinjoint4.data= self.getSinJoints()[2]
         self.joint2=Float64()
-        self.joint2.data= self.get_joint_angles(self.pos_3D_plane)[0]
+        self.joint2.data= self.get_joint_angles(self.pos_3D_plane())[0]
         self.joint3=Float64()
-        self.joint3.data= self.get_joint_angles(self.pos_3D_plane)[1]
+        self.joint3.data= self.get_joint_angles(self.pos_3D_plane())[1]
         self.joint4=Float64()
-        self.joint4.data= self.get_joint_angles(self.pos_3D_plane)[2]
+        self.joint4.data= self.get_joint_angles(self.pos_3D_plane())[2]
         self.target = Float64()
         self.target= self.orange_target_
         self.target_x = Float64() 
@@ -101,9 +101,9 @@ class image_converter:
             self.robot_Sinjoint2.publish(self.Sinjoint2)
             self.robot_Sinjoint3.publish(self.Sinjoint3)
             self.robot_Sinjoint4.publish(self.Sinjoint4)
-            self.robot_joint2.publish(self.joint2)
-            self.robot_joint3.publish(self.joint3)
-            self.robot_joint4.publish(self.joint4)
+            self.robot_joint2_angle.publish(self.joint2)
+            self.robot_joint3_angle.publish(self.joint3)
+            self.robot_joint4_angle.publish(self.joint4)
             self.target_pos_x.publish(self.target_x)
             self.target_pos_x.publish(self.target_y)
             self.target_pos_x.publish(self.target_z)
@@ -222,18 +222,15 @@ class image_converter:
 
         cam2 = self.locate_target_sphere(image1, template)
 
-        sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], self.targetS_img1_pos[0] - self.yellow_img1_pos[0], ( cam2[1] - self.yellow_img1_pos[1])*-1]) * self.pixTometer()
+        sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], self.targetS_img1_pos[0] - self.yellow_img1_pos[0], ( cam2[1] - self.yellow_pos_IMG2[1])*-1]) * self.pixTometer()
     
         if (cam2[1] == -10):
             target_z = self.targetS_img1_pos[1]
+            sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], self.targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_img1_pos[1])*-1]) * self.pixTometer()
+           
         if (self.targetS_img1_pos[1] == -10):
             target_z =cam2[1]
-
-        
-        if target_z == cam2[1] : 
             sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], self.targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_pos_IMG2[1])*-1]) * self.pixTometer()
-        if target_z == self.targetS_img1_pos[1] :
-            sphere_location = np.array([cam2[0] - self.yellow_pos_IMG2[0], self.targetS_img1_pos[0] - self.yellow_img1_pos[0], (target_z  - self.yellow_img1_pos[1])*-1]) * self.pixTometer()
         
         return sphere_location
         
