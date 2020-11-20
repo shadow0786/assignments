@@ -63,11 +63,13 @@ class image_converter:
     def makeData(self , array , array1 , array2 , array3 , array4):
         return np.array([array[0] , array[1] , array1[0] , array1[1] , array2[0] , array2[1] , array3[0] , array3[1] , array4[0] , array4[1]])
         
-    def locate_target_sphere(self, image1, template):
+    def locate_target_sphere(self, image1, templateS):
         maskOrange = self.find_orange(image1)
         templateSphere = cv2.imread(templateS, 0)
         matching = cv2.matchTemplate(maskOrange, templateSphere, 0)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(matching)
+        if (min_loc[1] == 0):
+            return np.array([-10,-10])
         x = min_loc[0] 
         y = min_loc[1]
         return np.array([x,y])
@@ -94,7 +96,7 @@ class image_converter:
         kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if (Mo['m00' == 0]):
+        if (Mo['m00'] == 0):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -108,7 +110,7 @@ class image_converter:
         kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if (Mo['m00' == 0]):
+        if (Mo['m00'] == 0):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -122,7 +124,7 @@ class image_converter:
         kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations = 3)
         Mo = cv2.moments(NewMask)
-        if (Mo['m00' == 0]):
+        if (Mo['m00'] == 0):
             cx = -10
             cy = -10
             return np.array([cx,cy])
@@ -136,7 +138,7 @@ class image_converter:
         kernel = np.ones((5,5) , np.uint8)
         NewMask = cv2.dilate(mask , kernel , iterations= 3)
         Mo = cv2.moments(NewMask)
-        if (Mo['m00' == 0]):
+        if (Mo['m00'] == 0):
             cx = -10
             cy = -10
             return np.array([cx,cy])
