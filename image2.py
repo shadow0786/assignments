@@ -36,9 +36,9 @@ class image_converter:
         self.robot_Sinjoint2 = rospy.Publisher("/robot/joint2_position_controller/command", Float64, queue_size = 10)
         self.robot_Sinjoint3 = rospy.Publisher("/robot/joint3_position_controller/command", Float64, queue_size = 10)
         self.robot_Sinjoint4 = rospy.Publisher("/robot/joint4_position_controller/command", Float64, queue_size = 10)
-        self.robot_joint2_angle = rospy.Publisher("/robot/joint2_angle_controller/command", Float64, queue_size = 10)
-        self.robot_joint3_angle = rospy.Publisher("/robot/joint3_angle_controller/command", Float64, queue_size = 10)
-        self.robot_joint4_angle = rospy.Publisher("/robot/joint4_angle_controller/command", Float64, queue_size = 10)
+        self.robot_joint2_angle = rospy.Publisher("/robot/joint2_angle", Float64, queue_size = 10)
+        self.robot_joint3_angle = rospy.Publisher("/robot/joint3_angle", Float64, queue_size = 10)
+        self.robot_joint4_angle = rospy.Publisher("/robot/joint4_angle", Float64, queue_size = 10)
 
         self.time = rospy.get_time()
         
