@@ -22,7 +22,7 @@ class image_converter:
         self.image_sub1 = rospy.Subscriber("/camera1/robot/image_raw",Image,self.callback1)
         # initialize the bridge between openCV and ROS
         self.bridge = CvBridge()
-        self.cv_image1_data_pub = rospy.Publisher("/cv_image1/objects" , Float64MultiArray, queue_size = 10)
+        self.cv_image1_data_pub = rospy.Publisher("/cv_image1/objects" , Float64MultiArray, queue_size = 12) # mistake size not length
 
 
     # Recieve data from camera 1, process it, and publish
@@ -38,21 +38,23 @@ class image_converter:
         yellow = self.find_yellow(self.cv_image1)
         red = self.find_red(self.cv_image1)
         blue = self.find_blue(self.cv_image1)
-        templateS = cv2.imread("/home/amami/Project/catkin_ws/src/ivr_assignment/src/image_crop.png", 0)
+        templateS = "/home/amami/Project/catkin_ws/src/ivr_assignment/src/image_crop.png" 
+        templateR = "/home/amami/Project/catkin_ws/src/ivr_assignment/src/image_box1.png" 
+        target_R = self.locate_target_sphere(self.cv_image1, templateR) 
 
         
         target_S = self.locate_target_sphere(self.cv_image1, templateS)
     #     target_R = self.locate_targets(self, cv_image1, templateS , templateR)[1]
         
-        data = self.makeData(yellow , blue , green , red , target_S)
+        data = self.makeData(yellow , blue , green , red , target_S,target_R) 
         self.objects.data = data
         
     
         # Uncomment if you want to save the image
         #cv2.imwrite('image_copy.png', cv_image)
 
-        im1=cv2.imshow('window1', self.cv_image1)
-        cv2.waitKey(1)
+        #im1=cv2.imshow('window1', self.cv_image1)
+        #cv2.waitKey(1)
         # Publish the results
         try: 
             self.image_pub1.publish(self.bridge.cv2_to_imgmsg(self.cv_image1, "bgr8"))
@@ -60,8 +62,8 @@ class image_converter:
         except CvBridgeError as e:
             print(e)
 
-    def makeData(self , array , array1 , array2 , array3 , array4):
-        return np.array([array[0] , array[1] , array1[0] , array1[1] , array2[0] , array2[1] , array3[0] , array3[1] , array4[0] , array4[1]])
+    def makeData(self , array , array1 , array2 , array3 , array4,array5):
+        return np.array([array[0] , array[1] , array1[0] , array1[1] , array2[0] , array2[1] , array3[0] , array3[1] , array4[0] , array4[1],array5[0],array5[1]]) 
         
     def locate_target_sphere(self, image1, templateS):
         maskOrange = self.find_orange(image1)
@@ -74,21 +76,6 @@ class image_converter:
         y = min_loc[1]
         return np.array([x,y])
     
-    #   def locate_target_rectangle(self, image1, template):
-
-    #     matching = cv2.matchTemplate(image1, template, 0)
-    #     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(matching)
-    #     x = min_loc[0] 
-    #     y = min_loc[1]
-    #     return np.array([x,y])
-    
-    #   def locate_targets(self, image1, templateS , templateR):
-    #     maskOrange = self.find_orange(image1)
-    #     templateSphere = cv2.imread(templateS, 0)
-    #     templateRectangle = cv2.imread(templateR, 0)
-    #     targetSphere = self.locate_target_sphere(maskOrange, templateSphere)
-    #     targetRectangle = self.locate_target_rectangle(maskOrange, templateRectangle)
-    #     return np.array([targetSphere , targetRectangle])
         
     def find_yellow(self , image):
 
@@ -164,5 +151,4 @@ def main(args):
 # run the code if the node is called
 if __name__ == '__main__':
     main(sys.argv)
-
-
+    
